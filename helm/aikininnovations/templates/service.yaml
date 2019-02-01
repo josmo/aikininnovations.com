@@ -1,0 +1,22 @@
+{{- if .Values.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "aikininnovations.fullname" . }}
+  labels:
+    app: {{ template "aikininnovations.name" . }}
+    chart: {{ template "aikininnovations.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    field.cattle.io/targetWorkloadIds: '["deployment:{{ .Release.Namespace }}:{{ template "aikininnovations.fullname" . }}"]'
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    'workload.user.cattle.io/workloadselector': {{ template "aikininnovations.fullname" . }}
+{{- end }}
